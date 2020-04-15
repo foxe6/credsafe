@@ -1,6 +1,6 @@
 from .agent import *
 
 
-version = "0.1.6"
+version = "0.2.0"
 keywords = ["credentials safe"]
 entry = "test:main"
