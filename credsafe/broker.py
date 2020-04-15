@@ -1,7 +1,5 @@
 import keyring
-from easyrsa import *
 from omnitools import *
-from aescipher import *
 
 
 __ALL__ = ["Broker"]
@@ -10,6 +8,9 @@ __ALL__ = ["Broker"]
 class Broker(object):
     def __init__(self, app_name: str, username: str) -> None:
         self.__split_length = 10 ** 3
+        self.__krs = lambda i, v: keyring.set_password(sha512(f"{app_name}[{i}]"), username, v)
+        self.__krg = lambda i: keyring.get_password(sha512(f"{app_name}[{i}]"), username)
+        self.__krd = lambda i: keyring.delete_password(sha512(f"{app_name}[{i}]"), username)
         self.__app_name = app_name
         self.__username = username
         if len(self.__get()) == 0:
@@ -27,7 +28,7 @@ class Broker(object):
         v = ""
         i = 0
         while True:
-            _ = keyring.get_password(sha512(f"{self.__app_name}[{i}]"), self.__username)
+            _ = self.__krg(i)
             if _ is None:
                 break
             else:
@@ -42,10 +43,10 @@ class Broker(object):
 
     def __set(self, v: Dict[str, str]) -> bool:
         self.__check()
-        v = b64e(jd(v))
+        v = jd_and_b64e(v)
         i = 0
         while v:
-            keyring.set_password(sha512(f"{self.__app_name}[{i}]"), self.__username, v[:self.__split_length])
+            self.__krs(i, v[:self.__split_length])
             v = v[self.__split_length:]
             i += 1
         return self.__delete(i)
@@ -63,12 +64,11 @@ class Broker(object):
     def __delete(self, i: int = 0) -> bool:
         self.__check()
         while True:
-            kr = (sha512(f"{self.__app_name}[{i}]"), self.__username)
-            _ = keyring.get_password(*kr)
+            _ = self.__krg(i)
             if _ is None:
                 return True
             else:
-                keyring.delete_password(*kr)
+                self.__krd(i)
                 i += 1
 
     def destroy(self) -> bool:
