@@ -15,11 +15,11 @@ class Agent(object):
         self.__aesd = lambda k, v: self.__check() and AESCipher(
             EasyRSA(private_key=key_pair["private_key"]).decrypt(k)
         ).decrypt(v)
-        self.__sign = lambda m: EasyRSA(private_key=key_pair["private_key"]).sign(m)
-        self.__verify = lambda m, s: EasyRSA(public_key=key_pair["public_key"]).verify(m, s)
+        self.__sign = lambda m: self.__check() and EasyRSA(private_key=key_pair["private_key"]).sign(m)
+        self.__verify = lambda m, s: self.__check() and EasyRSA(public_key=key_pair["public_key"]).verify(m, s)
         self.__setk = lambda k, v: self.__check() and mac(sha512(k), v)
         self.__setn = lambda v: self.__check() and self.__setk(key_pair["public_key"], v)
-        self.__app_name = self.__setn(app_name)
+        self.__broker = lambda id: self.__check() and Broker(app_name=self.__setn(app_name), username=self.__setn(id))
 
     @staticmethod
     def __check() -> bool:
@@ -36,7 +36,7 @@ class Agent(object):
         return f"{hash} {sk} {v}"
 
     def set(self, id: str, pw: str, k: str, v: Any) -> Any:
-        Broker(app_name=self.__app_name, username=self.__setn(id)).set(self.__setk(pw, k), self.__encrypt(v))
+        self.__broker(id).set(self.__setk(pw, k), self.__encrypt(v))
         return self
 
     def __decrypt(self, v: str) -> Any:
@@ -47,13 +47,13 @@ class Agent(object):
         raise Exception("credentials are tampered due to different hmac")
 
     def get(self, id: str, pw: str, k: str) -> Any:
-        return self.__decrypt(Broker(app_name=self.__app_name, username=self.__setn(id)).get(self.__setk(pw, k)))
+        return self.__decrypt(self.__broker(id).get(self.__setk(pw, k)))
 
     def rm(self, id: str, pw: str, k: str) -> bool:
-        return Broker(app_name=self.__app_name, username=self.__setn(id)).rm(self.__setk(pw, k))
+        return self.__broker(id).rm(self.__setk(pw, k))
 
     def destroy(self, id: str) -> bool:
-        return Broker(app_name=self.__app_name, username=self.__setn(id)).destroy()
+        return self.__broker(id).destroy()
 
 
 
