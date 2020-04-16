@@ -12,8 +12,6 @@ class Broker(object):
         self.__krs = lambda i, v: keyring.set_password(sha512(f"{app_name}[{i}]"), username, v)
         self.__krg = lambda i: keyring.get_password(sha512(f"{app_name}[{i}]"), username)
         self.__krd = lambda i: keyring.delete_password(sha512(f"{app_name}[{i}]"), username)
-        self.__app_name = app_name
-        self.__username = username
         if len(self.__get()) == 0:
             self.set("", "")
 
@@ -74,8 +72,9 @@ class Broker(object):
 
     def destroy(self) -> bool:
         self.__delete()
-        self.__username = None
-        self.__app_name = None
+        self.__krs = None
+        self.__krg = None
+        self.__krd = None
         return True
 
 

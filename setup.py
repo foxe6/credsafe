@@ -18,7 +18,7 @@ open("README.md", "wb").write(readme.encode("utf-8"))
 description = re.search(r"<i>(.*?)</i>", readme)[1]
 setup(
     name="credsafe",
-    version="0.3.0",
+    version="0.4.0",
     keywords=["credentials safe"],
     packages=find_packages(),
     url="https://github.com/foxe6/credsafe",

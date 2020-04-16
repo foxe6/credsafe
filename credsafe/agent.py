@@ -9,7 +9,7 @@ __ALL__ = ["Agent"]
 class Agent(object):
     def __init__(self, app_name: str, key_pair: key_pair_format) -> None:
         self.__aese = lambda v, _={}: self.__check() and (
-            _.update({0: randb((RSA.import_key(key_pair["public_key"]).n.bit_length()//8)-42)}) or
+            _.update({0: randb(EasyRSA(public_key=key_pair["public_key"]).max_msg_size())}) or
             (EasyRSA(public_key=key_pair["public_key"]).encrypt(_[0]), AESCipher(_[0]).encrypt(v))
         )
         self.__aesd = lambda k, v: self.__check() and AESCipher(

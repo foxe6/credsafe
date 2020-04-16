@@ -52,8 +52,3 @@ print(credsafe_agent.get(id="username", pw="password", k="config"))
 # destroy everything for a user
 credsafe_agent.destroy(id="username")
 ```
-
-## shell
-```shell script
-
-```
