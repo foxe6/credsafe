@@ -8,7 +8,7 @@
 [![made](https://img.shields.io/badge/Made%20with-PyCharm-red.svg)](https://paypal.me/foxe6)
 </badges>
 
-<i>Store application credentials in keyring with RSA and AES.</i>
+<i>Store application credentials in keyring with RSA and AES-256.</i>
 
 # Hierarchy
 
