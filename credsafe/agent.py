@@ -18,7 +18,7 @@ class Agent(object):
         ).decrypt(v)
         self.__sign = lambda m: self.__check() and EasyRSA(private_key=key_pair["private_key"]).sign(m)
         self.__verify = lambda m, s: self.__check() and EasyRSA(public_key=key_pair["public_key"]).verify(m, s)
-        self.__setk = lambda k, v: self.__check() and mac(sha512(k), v)
+        self.__setk = lambda k, v: self.__check() and mac(sha512hd(k), v)
         self.__setn = lambda v: self.__check() and self.__setk(key_pair["public_key"], v)
         self.__broker = lambda id: self.__check() and Broker(app_name=self.__setn(app_name), username=self.__setn(id))
 

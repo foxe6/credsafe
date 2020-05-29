@@ -1,5 +1,5 @@
 import keyring
-from omnitools import sha512, b64d_and_utf8d, jl, jd_and_b64e
+from omnitools import sha512hd, b64d_and_utf8d, jl, jd_and_b64e
 from typing import *
 
 
@@ -9,9 +9,9 @@ __ALL__ = ["Broker"]
 class Broker(object):
     def __init__(self, app_name: str, username: str) -> None:
         self.__split_length = 10 ** 3
-        self.__krs = lambda i, v: keyring.set_password(sha512(f"{app_name}[{i}]"), username, v)
-        self.__krg = lambda i: keyring.get_password(sha512(f"{app_name}[{i}]"), username)
-        self.__krd = lambda i: keyring.delete_password(sha512(f"{app_name}[{i}]"), username)
+        self.__krs = lambda i, v: keyring.set_password(sha512hd(f"{app_name}[{i}]"), username, v)
+        self.__krg = lambda i: keyring.get_password(sha512hd(f"{app_name}[{i}]"), username)
+        self.__krd = lambda i: keyring.delete_password(sha512hd(f"{app_name}[{i}]"), username)
         if len(self.__get()) == 0:
             self.set("", "")
 
